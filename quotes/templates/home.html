@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load humanize %} {# This line is crucial for using intcomma #}
+{% block content %}
+
+{% if ticker %}
+    {{ ticker }}
+{% endif %}
+
+{% if api == 'No data found for this ticker.' %}
+    <p><strong>'No data found for this ticker. Please retry...</strong>
+{% endif %}
+
+{% if api %}
+    {% with stock_data=api.0 %}
+        <div class="stock-info">
+            <h1>Ticker: {{ stock_data.symbol|default:"N/A" }} - {{ stock_data.name|default:"N/A" }}</h1>
+            <p><strong>Current Price:</strong> ${{ stock_data.price|floatformat:2|default:"N/A" }}</p>
+            <p><strong>Change:</strong> {{ stock_data.change|floatformat:2|default:"N/A" }} ({{ stock_data.changePercentage|floatformat:2|default:"N/A" }}%)</p>
+            <p><strong>Volume:</strong> {{ stock_data.volume|intcomma|default:"N/A" }}</p>
+            <p><strong>Day Low:</strong> ${{ stock_data.dayLow|floatformat:2|default:"N/A" }}</p>
+            <p><strong>Day High:</strong> ${{ stock_data.dayHigh|floatformat:2|default:"N/A" }}</p>
+            <p><strong>Year Low:</strong> ${{ stock_data.yearLow|floatformat:2|default:"N/A" }}</p>
+            <p><strong>Year High:</strong> ${{ stock_data.yearHigh|floatformat:2|default:"N/A" }}</p>
+            <p><strong>Market Cap:</strong> ${{ stock_data.marketCap|intcomma|default:"N/A" }}</p>
+            <p><strong>Exchange:</strong> {{ stock_data.exchange|default:"N/A" }}</p>
+            <p><strong>Open:</strong> ${{ stock_data.open|floatformat:2|default:"N/A" }}</p>
+            <p><strong>Previous Close:</strong> ${{ stock_data.previousClose|floatformat:2|default:"N/A" }}</p>
+            <p><strong>Last Updated:</strong> {{ stock_data.timestamp|date:"P, j M Y"|default:"N/A" }}</p> {# Format timestamp to human-readable date/time #}
+        </div>
+    {% endwith %}
+{% endif %}
+
+{% endblock %}
